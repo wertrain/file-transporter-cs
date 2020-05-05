@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-            this.splitContainerMain = new System.Windows.Forms.SplitContainer();
+            this.splitContainerFilesControl = new System.Windows.Forms.SplitContainer();
             this.expTree1 = new ExpTreeLib.ExpTree();
             this.listViewFiles = new System.Windows.Forms.ListView();
             this.columnHeaderFileName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -42,32 +42,41 @@
             this.toolStripMenuItemTool = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStripMainButton = new System.Windows.Forms.MenuStrip();
-            this.toolStripMenuItemTransfer = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItemCancel = new System.Windows.Forms.ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).BeginInit();
-            this.splitContainerMain.Panel1.SuspendLayout();
-            this.splitContainerMain.Panel2.SuspendLayout();
-            this.splitContainerMain.SuspendLayout();
+            this.splitContainerBase = new System.Windows.Forms.SplitContainer();
+            this.listViewClients = new System.Windows.Forms.ListView();
+            this.columnHeaderClientName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderClientIP = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.toolStripMenuItemFileTransfer = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemCancelTransfer = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemUpdateClientList = new System.Windows.Forms.ToolStripMenuItem();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerFilesControl)).BeginInit();
+            this.splitContainerFilesControl.Panel1.SuspendLayout();
+            this.splitContainerFilesControl.Panel2.SuspendLayout();
+            this.splitContainerFilesControl.SuspendLayout();
             this.menuStripMain.SuspendLayout();
             this.menuStripMainButton.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerBase)).BeginInit();
+            this.splitContainerBase.Panel1.SuspendLayout();
+            this.splitContainerBase.Panel2.SuspendLayout();
+            this.splitContainerBase.SuspendLayout();
             this.SuspendLayout();
             // 
-            // splitContainerMain
+            // splitContainerFilesControl
             // 
-            this.splitContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainerMain.Location = new System.Drawing.Point(0, 48);
-            this.splitContainerMain.Name = "splitContainerMain";
+            this.splitContainerFilesControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerFilesControl.Location = new System.Drawing.Point(0, 0);
+            this.splitContainerFilesControl.Name = "splitContainerFilesControl";
             // 
-            // splitContainerMain.Panel1
+            // splitContainerFilesControl.Panel1
             // 
-            this.splitContainerMain.Panel1.Controls.Add(this.expTree1);
+            this.splitContainerFilesControl.Panel1.Controls.Add(this.expTree1);
             // 
-            // splitContainerMain.Panel2
+            // splitContainerFilesControl.Panel2
             // 
-            this.splitContainerMain.Panel2.Controls.Add(this.listViewFiles);
-            this.splitContainerMain.Size = new System.Drawing.Size(800, 402);
-            this.splitContainerMain.SplitterDistance = 266;
-            this.splitContainerMain.TabIndex = 0;
+            this.splitContainerFilesControl.Panel2.Controls.Add(this.listViewFiles);
+            this.splitContainerFilesControl.Size = new System.Drawing.Size(800, 306);
+            this.splitContainerFilesControl.SplitterDistance = 266;
+            this.splitContainerFilesControl.TabIndex = 0;
             // 
             // expTree1
             // 
@@ -77,7 +86,7 @@
             this.expTree1.Location = new System.Drawing.Point(0, 0);
             this.expTree1.Name = "expTree1";
             this.expTree1.ShowRootLines = false;
-            this.expTree1.Size = new System.Drawing.Size(266, 402);
+            this.expTree1.Size = new System.Drawing.Size(266, 306);
             this.expTree1.StartUpDirectory = ExpTreeLib.ExpTree.StartDir.Desktop;
             this.expTree1.TabIndex = 0;
             // 
@@ -94,7 +103,7 @@
             this.listViewFiles.HideSelection = false;
             this.listViewFiles.Location = new System.Drawing.Point(0, 0);
             this.listViewFiles.Name = "listViewFiles";
-            this.listViewFiles.Size = new System.Drawing.Size(530, 402);
+            this.listViewFiles.Size = new System.Drawing.Size(530, 306);
             this.listViewFiles.TabIndex = 0;
             this.listViewFiles.UseCompatibleStateImageBehavior = false;
             this.listViewFiles.View = System.Windows.Forms.View.Details;
@@ -137,7 +146,7 @@
             // toolStripMenuItemFileExit
             // 
             this.toolStripMenuItemFileExit.Name = "toolStripMenuItemFileExit";
-            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItemFileExit.Size = new System.Drawing.Size(108, 22);
             this.toolStripMenuItemFileExit.Text = "Exit(&X)";
             this.toolStripMenuItemFileExit.Click += new System.EventHandler(this.toolStripMenuItemFileExit_Click);
             // 
@@ -163,48 +172,106 @@
             // 
             this.menuStripMainButton.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
             this.menuStripMainButton.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemTransfer,
-            this.toolStripMenuItemCancel});
+            this.toolStripMenuItemFileTransfer,
+            this.toolStripMenuItemCancelTransfer,
+            this.toolStripMenuItemUpdateClientList});
             this.menuStripMainButton.Location = new System.Drawing.Point(0, 24);
             this.menuStripMainButton.Name = "menuStripMainButton";
             this.menuStripMainButton.Size = new System.Drawing.Size(800, 24);
             this.menuStripMainButton.TabIndex = 2;
             this.menuStripMainButton.Text = "menuStripMainButton";
             // 
-            // toolStripMenuItemTransfer
+            // splitContainerBase
             // 
-            this.toolStripMenuItemTransfer.Image = global::FTPR.Properties.Resources.transfer;
-            this.toolStripMenuItemTransfer.Name = "toolStripMenuItemTransfer";
-            this.toolStripMenuItemTransfer.Size = new System.Drawing.Size(76, 20);
-            this.toolStripMenuItemTransfer.Text = "Transfer";
+            this.splitContainerBase.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerBase.Location = new System.Drawing.Point(0, 48);
+            this.splitContainerBase.Name = "splitContainerBase";
+            this.splitContainerBase.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // toolStripMenuItemCancel
+            // splitContainerBase.Panel1
             // 
-            this.toolStripMenuItemCancel.Image = global::FTPR.Properties.Resources.cancel;
-            this.toolStripMenuItemCancel.Name = "toolStripMenuItemCancel";
-            this.toolStripMenuItemCancel.Size = new System.Drawing.Size(70, 20);
-            this.toolStripMenuItemCancel.Text = "Cancel";
+            this.splitContainerBase.Panel1.Controls.Add(this.listViewClients);
+            // 
+            // splitContainerBase.Panel2
+            // 
+            this.splitContainerBase.Panel2.Controls.Add(this.splitContainerFilesControl);
+            this.splitContainerBase.Size = new System.Drawing.Size(800, 402);
+            this.splitContainerBase.SplitterDistance = 92;
+            this.splitContainerBase.TabIndex = 3;
+            // 
+            // listViewClients
+            // 
+            this.listViewClients.CheckBoxes = true;
+            this.listViewClients.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeaderClientName,
+            this.columnHeaderClientIP});
+            this.listViewClients.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.listViewClients.FullRowSelect = true;
+            this.listViewClients.GridLines = true;
+            this.listViewClients.HideSelection = false;
+            this.listViewClients.Location = new System.Drawing.Point(0, 0);
+            this.listViewClients.Name = "listViewClients";
+            this.listViewClients.Size = new System.Drawing.Size(800, 92);
+            this.listViewClients.TabIndex = 0;
+            this.listViewClients.UseCompatibleStateImageBehavior = false;
+            this.listViewClients.View = System.Windows.Forms.View.Details;
+            // 
+            // columnHeaderClientName
+            // 
+            this.columnHeaderClientName.Text = "Client name";
+            this.columnHeaderClientName.Width = 120;
+            // 
+            // columnHeaderClientIP
+            // 
+            this.columnHeaderClientIP.Text = "IP";
+            this.columnHeaderClientIP.Width = 114;
+            // 
+            // toolStripMenuItemFileTransfer
+            // 
+            this.toolStripMenuItemFileTransfer.Image = global::FTPR.Properties.Resources.transfer;
+            this.toolStripMenuItemFileTransfer.Name = "toolStripMenuItemFileTransfer";
+            this.toolStripMenuItemFileTransfer.Size = new System.Drawing.Size(76, 20);
+            this.toolStripMenuItemFileTransfer.Text = "Transfer";
+            // 
+            // toolStripMenuItemCancelTransfer
+            // 
+            this.toolStripMenuItemCancelTransfer.Image = global::FTPR.Properties.Resources.cancel;
+            this.toolStripMenuItemCancelTransfer.Name = "toolStripMenuItemCancelTransfer";
+            this.toolStripMenuItemCancelTransfer.Size = new System.Drawing.Size(70, 20);
+            this.toolStripMenuItemCancelTransfer.Text = "Cancel";
+            // 
+            // toolStripMenuItemUpdateClientList
+            // 
+            this.toolStripMenuItemUpdateClientList.Image = global::FTPR.Properties.Resources.refresh;
+            this.toolStripMenuItemUpdateClientList.Name = "toolStripMenuItemUpdateClientList";
+            this.toolStripMenuItemUpdateClientList.Size = new System.Drawing.Size(127, 20);
+            this.toolStripMenuItemUpdateClientList.Text = "Update Client List";
+            this.toolStripMenuItemUpdateClientList.Click += new System.EventHandler(this.toolStripMenuItemUpdateClientList_Click);
             // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.splitContainerMain);
+            this.Controls.Add(this.splitContainerBase);
             this.Controls.Add(this.menuStripMainButton);
             this.Controls.Add(this.menuStripMain);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStripMain;
             this.Name = "FormMain";
             this.Text = "FTPR";
-            this.splitContainerMain.Panel1.ResumeLayout(false);
-            this.splitContainerMain.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainerMain)).EndInit();
-            this.splitContainerMain.ResumeLayout(false);
+            this.splitContainerFilesControl.Panel1.ResumeLayout(false);
+            this.splitContainerFilesControl.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerFilesControl)).EndInit();
+            this.splitContainerFilesControl.ResumeLayout(false);
             this.menuStripMain.ResumeLayout(false);
             this.menuStripMain.PerformLayout();
             this.menuStripMainButton.ResumeLayout(false);
             this.menuStripMainButton.PerformLayout();
+            this.splitContainerBase.Panel1.ResumeLayout(false);
+            this.splitContainerBase.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerBase)).EndInit();
+            this.splitContainerBase.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -212,11 +279,11 @@
 
         #endregion
 
-        private System.Windows.Forms.SplitContainer splitContainerMain;
+        private System.Windows.Forms.SplitContainer splitContainerFilesControl;
         private System.Windows.Forms.MenuStrip menuStripMain;
         private System.Windows.Forms.MenuStrip menuStripMainButton;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemTransfer;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemCancel;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemFileTransfer;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemCancelTransfer;
         private ExpTreeLib.ExpTree expTree1;
         private System.Windows.Forms.ListView listViewFiles;
         private System.Windows.Forms.ColumnHeader columnHeaderFileName;
@@ -227,6 +294,11 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemTool;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemHelp;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemFileExit;
+        private System.Windows.Forms.SplitContainer splitContainerBase;
+        private System.Windows.Forms.ListView listViewClients;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemUpdateClientList;
+        private System.Windows.Forms.ColumnHeader columnHeaderClientName;
+        private System.Windows.Forms.ColumnHeader columnHeaderClientIP;
     }
 }
 

@@ -89,5 +89,17 @@
   <ItemGroup>
     <None Include="Resources\cancel.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\list.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FTPLib\FTPLib.csproj">
+      <Project>{5fdbfb99-4ec9-4ce9-8041-ff1689d9f7bf}</Project>
+      <Name>FTPLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

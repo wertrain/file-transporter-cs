@@ -21,5 +21,10 @@ namespace FTPR
         {
             Close();
         }
+
+        private void toolStripMenuItemUpdateClientList_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
