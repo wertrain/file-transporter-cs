@@ -11,13 +11,31 @@ namespace FTPLib
     /// </summary>
     public enum FTPMessageType
     {
+        /// <summary>
+        /// 無効なメッセージ
+        /// </summary>
         TypeInvalid,
+
+        /// <summary>
+        /// 接続メッセージ
+        /// </summary>
+        TypeHandShake,
+
+        /// <summary>
+        /// 切断メッセージ
+        /// </summary>
+        TypeDisconnect,
+
+        /// <summary>
+        /// ファイル送信メッセージ
+        /// </summary>
         TypeFile,
     };
 
     /// <summary>
     /// メッセージデータ
     /// </summary>
+    [Serializable()]
     public struct FTPMessageData
     {
         /// <summary>
@@ -31,14 +49,14 @@ namespace FTPLib
         public FTPMessageType Type { get; set; }
 
         /// <summary>
-        /// データサイズ
+        /// 汎用メッセージ
         /// </summary>
-        public UInt64 Size { get; set; }
+        public string Message { get; set; }
 
         /// <summary>
         /// 汎用データ
         /// </summary>
-        public Int32[] Value { get; set; }
+        public byte[] Data { get; set; }
 
         /// <summary>
         /// 
@@ -48,8 +66,8 @@ namespace FTPLib
         {
             Header = MessageHeader.Clone() as char[];
             Type = type;
-            Size = 0;
-            Value = new Int32[8];
+            Message = string.Empty;
+            Data = null;
         }
 
         /// <summary>

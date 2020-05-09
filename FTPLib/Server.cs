@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FTPLib
 {
+    /// <summary>
+    /// サーバ接続リスナーインターフェース
+    /// </summary>
     public interface ServerConnectionListener
     {
         /// <summary>
@@ -32,8 +36,14 @@ namespace FTPLib
         void OnFileReceived(Server server, byte[] data);
     }
 
+    /// <summary>
+    /// サーバ側の接続管理クラス
+    /// </summary>
     public class Server
     {
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public Server()
         {
             ServerConnectionListeners = new List<ServerConnectionListener>();
@@ -43,6 +53,11 @@ namespace FTPLib
         /// サーバー接続リスナー
         /// </summary>
         public List<ServerConnectionListener> ServerConnectionListeners { get; private set; }
+
+        /// <summary>
+        /// タイムアウト時間
+        /// </summary>
+        public int TimeoutMillisec { get; private set; } = 100000;
 
         /// <summary>
         /// リスナーを追加
@@ -62,6 +77,12 @@ namespace FTPLib
             ServerConnectionListeners.Remove(listener);
         }
 
+        /// <summary>
+        /// 接続を開始
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
+        /// <returns></returns>
         public bool Start(string ip, int port)
         {
             try
@@ -79,139 +100,50 @@ namespace FTPLib
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="listener"></param>
         private void listen(System.Net.Sockets.TcpListener listener)
         {
             var client = listener.AcceptTcpClient();
 
-            System.Net.Sockets.NetworkStream ns = client.GetStream();
-
-            ns.ReadTimeout = 10000;
-            ns.WriteTimeout = 10000;
-
-            //クライアントから送られたデータを受信する
-            Encoding enc = Encoding.UTF8;
-            bool disconnected = false;
-            var ms = new MemoryStream();
-            byte[] resBytes = new byte[256];
-            int resSize = 0;
-            //FTPLib.FTPMessageData data;
-            do
+            using (var ns = client.GetStream())
             {
-                //var size = sizeof(FTPLib.FTPMessageData);
-                //データの一部を受信する
-                resSize = ns.Read(resBytes, 0, resBytes.Length);
-                //Readが0を返した時はクライアントが切断したと判断
-                if (resSize == 0)
+                ns.ReadTimeout = ns.WriteTimeout = TimeoutMillisec;
+
+                bool disconnected = false;
+                do
                 {
-                    disconnected = true;
-                    Console.WriteLine("クライアントが切断しました。");
-                    break;
+                    // クライアントからのメッセージを受信
+                    using (var rms = new MemoryStream())
+                    {
+                        ns.Read(rms.ToArray(), 0, (int)rms.Length);
+
+                        BinaryFormatter rbf = new BinaryFormatter();
+                        FTPMessageData rMessageData = (FTPMessageData)rbf.Deserialize(ns);
+
+                        switch(rMessageData.Type)
+                        {
+                            case FTPMessageType.TypeHandShake:
+                                foreach (var listeners in ServerConnectionListeners)
+                                {
+                                    listeners.OnConnectClient(this, rMessageData.Message);
+                                }
+                                using (var sms = new MemoryStream())
+                                {
+                                    var sMessageData = new FTPMessageData(FTPMessageType.TypeHandShake);
+                                    sMessageData.Message = Dns.GetHostName();
+                                    BinaryFormatter bf = new BinaryFormatter();
+                                    bf.Serialize(sms, sMessageData);
+                                    ns.Write(sms.ToArray(), 0, (int)sms.Length);
+                                }
+                                break;
+                        }
+                    }
                 }
-                //受信したデータを蓄積する
-                ms.Write(resBytes, 0, resSize);
-                //まだ読み取れるデータがあるか、データの最後が\nでない時は、
-                // 受信を続ける
-            } while (ns.DataAvailable || resBytes[resSize - 1] != '\n');
-
-            //受信したデータを文字列に変換
-            string resMsg = enc.GetString(ms.GetBuffer(), 0, (int)ms.Length);
-            ms.Close();
-            //末尾の\nを削除
-            resMsg = resMsg.TrimEnd('\n');
-            Console.WriteLine(resMsg);
-
-            foreach (var listeners in ServerConnectionListeners)
-            {
-                listeners.OnConnectClient(this, resMsg);
+                while (!disconnected);
             }
-
-            if (!disconnected)
-            {
-                //クライアントにデータを送信する
-                //クライアントに送信する文字列を作成
-                string sendMsg = resMsg.Length.ToString();
-                //文字列をByte型配列に変換
-                byte[] sendBytes = enc.GetBytes(sendMsg + '\n');
-                //データを送信する
-                ns.Write(sendBytes, 0, sendBytes.Length);
-                Console.WriteLine(sendMsg);
-            }
-
-            //閉じる
-            ns.Close();
-            client.Close();
-            Console.WriteLine("クライアントとの接続を閉じました。");
-
-            //リスナを閉じる
-            listener.Stop();
-            Console.WriteLine("Listenerを閉じました。");
-        }
-
-        private void receiving(System.Net.Sockets.TcpListener listener)
-        {
-            var client = listener.AcceptTcpClient();
-
-            System.Net.Sockets.NetworkStream ns = client.GetStream();
-
-            ns.ReadTimeout = 10000;
-            ns.WriteTimeout = 10000;
-
-            //クライアントから送られたデータを受信する
-
-            bool disconnected = false;
-            var ms = new MemoryStream();
-            byte[] resBytes = new byte[1024 * 1024 * 8];
-            int resSize = 0;
-            do
-            {
-                //データの一部を受信する
-                resSize = ns.Read(resBytes, 0, resBytes.Length);
-                //Readが0を返した時はクライアントが切断したと判断
-                if (resSize == 0)
-                {
-                    disconnected = true;
-                    Console.WriteLine("クライアントが切断しました。");
-                    break;
-                }
-                //受信したデータを蓄積する
-                ms.Write(resBytes, 0, resSize);
-                //まだ読み取れるデータがあるか、データの最後が\nでない時は、
-                // 受信を続ける
-            } while (ns.DataAvailable || resBytes[resSize - 1] != '\n');
-
-            //受信したデータを文字列に変換
-            Encoding enc = Encoding.UTF8;
-            string resMsg = enc.GetString(ms.GetBuffer(), 0, (int)ms.Length);
-            ms.Close();
-            //末尾の\nを削除
-            resMsg = resMsg.TrimEnd('\n');
-            Console.WriteLine(resMsg);
-
-            foreach (var listeners in ServerConnectionListeners)
-            {
-                listeners.OnConnectClient(this, resMsg);
-            }
-
-            if (!disconnected)
-            {
-                //クライアントにデータを送信する
-                //クライアントに送信する文字列を作成
-                string sendMsg = resMsg.Length.ToString();
-                //文字列をByte型配列に変換
-                byte[] sendBytes = enc.GetBytes(sendMsg + '\n');
-                //データを送信する
-                ns.Write(sendBytes, 0, sendBytes.Length);
-                Console.WriteLine(sendMsg);
-            }
-
-            //閉じる
-            ns.Close();
-            client.Close();
-            Console.WriteLine("クライアントとの接続を閉じました。");
-
-            //リスナを閉じる
-            listener.Stop();
-            Console.WriteLine("Listenerを閉じました。");
         }
     }
 }
