@@ -61,12 +61,17 @@ namespace FTPRCLI
                 }
                 else
                 {
-                    var client = new FTPLib.Client();
-                    if (client.Start(address, port))
+                    var filePath = fileOption.Value();
+                    if (System.IO.File.Exists(filePath))
                     {
-                        Console.WriteLine($"Connect server on {address}:{port}");
-                        Console.WriteLine($"sending file {fileOption.Value()}");
+                        var client = new FTPLib.Client();
+                        if (client.transfer(address, port, filePath))
+                        {
+                            Console.WriteLine($"Connect server on {address}:{port}");
+                            Console.WriteLine($"sending file {fileOption.Value()}");
+                        }
                     }
+
                 }
                 
                 return 0;
