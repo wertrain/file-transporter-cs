@@ -90,6 +90,42 @@ namespace FTPLib
             return true;
         }
 
+        public bool transfer(string ip, int port, string path)
+        {
+            try
+            {
+                var client = new System.Net.Sockets.TcpClient(ip, port);
+                using (var ns = client.GetStream())
+                {
+                    using (var fs = new FileStream(path, FileMode.Open))
+                    {
+                        byte[] sendBytes = new byte[1024 * 1024];
+
+                        do
+                        {
+                            int sendSize = fs.Read(sendBytes, 0, sendBytes.Length);
+                            if (sendSize == 0 || sendSize < sendBytes.Length)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                ns.Write(sendBytes, 0, sendSize);
+                            }                           
+                        } while (true);                        
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+
+
+        }
+
         /// <summary>
         /// 
         /// </summary>
