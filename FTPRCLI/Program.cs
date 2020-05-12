@@ -45,14 +45,16 @@ namespace FTPRCLI
                     int.TryParse(portOption.Value(), out port);
                 }
 
-                bool bootServerMode = fileOption.HasValue();
+                bool bootServerMode = !fileOption.HasValue();
                 if (bootServerMode)
                 {
+                    Console.WriteLine($"Start server on {address}:{port}");
+                    Console.WriteLine($"waiting for connection.");
+
                     var server = new FTPLib.Server();
-                    if (server.Start(address, port))
+                    if (server.Receive(address, port))
                     {
-                        Console.WriteLine($"Start server on {address}:{port}");
-                        Console.WriteLine($"waiting for connection.");
+                        Console.WriteLine($"File received.");
                     }
                     else
                     {
@@ -64,11 +66,16 @@ namespace FTPRCLI
                     var filePath = fileOption.Value();
                     if (System.IO.File.Exists(filePath))
                     {
+                        Console.WriteLine($"Connect server on {address}:{port}");
+
                         var client = new FTPLib.Client();
                         if (client.transfer(address, port, filePath))
                         {
-                            Console.WriteLine($"Connect server on {address}:{port}");
-                            Console.WriteLine($"sending file {fileOption.Value()}");
+                            Console.WriteLine($"Sent file {fileOption.Value()}");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Failed send file.");
                         }
                     }
 

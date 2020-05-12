@@ -103,6 +103,53 @@ namespace FTPLib
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
+        /// <returns></returns>
+        public bool Receive(string ip, int port)
+        {
+            try
+            {
+                var ipAddress = IPAddress.Parse(ip);
+                var listener = new System.Net.Sockets.TcpListener(ipAddress, port);
+                listener.Start();
+
+                var client = listener.AcceptTcpClient();
+
+                using (var ns = client.GetStream())
+                {
+                    ns.ReadTimeout = ns.WriteTimeout = TimeoutMillisec;
+
+                    using (var ms = new MemoryStream())
+                    {
+                        ns.Read(ms.ToArray(), 0, (int)ms.Length);
+
+                        BinaryFormatter bf = new BinaryFormatter();
+                        var ftpMessageData = (FTPMessageData)bf.Deserialize(ns);
+
+                        switch (ftpMessageData.Type)
+                        {
+                            case FTPMessageType.TypeFile:
+                                using (var writer = new BinaryWriter(new FileStream(ftpMessageData.Message, FileMode.Create)))
+                                {
+                                    writer.Write(ftpMessageData.Data); 
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="listener"></param>
         private void listen(System.Net.Sockets.TcpListener listener)
         {

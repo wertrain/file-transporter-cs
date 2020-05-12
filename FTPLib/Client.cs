@@ -90,29 +90,29 @@ namespace FTPLib
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public bool transfer(string ip, int port, string path)
         {
             try
             {
                 var client = new System.Net.Sockets.TcpClient(ip, port);
+
                 using (var ns = client.GetStream())
                 {
-                    using (var fs = new FileStream(path, FileMode.Open))
+                    using (var ms = new MemoryStream())
                     {
-                        byte[] sendBytes = new byte[1024 * 1024];
-
-                        do
-                        {
-                            int sendSize = fs.Read(sendBytes, 0, sendBytes.Length);
-                            if (sendSize == 0 || sendSize < sendBytes.Length)
-                            {
-                                break;
-                            }
-                            else
-                            {
-                                ns.Write(sendBytes, 0, sendSize);
-                            }                           
-                        } while (true);                        
+                        var ftpMessageData = new FTPMessageData(FTPMessageType.TypeFile);
+                        ftpMessageData.Message = Path.GetFileName(path);
+                        ftpMessageData.Data = File.ReadAllBytes(path);
+                        BinaryFormatter bf = new BinaryFormatter();
+                        bf.Serialize(ms, ftpMessageData);
+                        ns.Write(ms.ToArray(), 0, (int)ms.Length);
                     }
                 }
             }
