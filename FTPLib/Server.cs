@@ -114,27 +114,28 @@ namespace FTPLib
                 var listener = new System.Net.Sockets.TcpListener(ipAddress, port);
                 listener.Start();
 
-                var client = listener.AcceptTcpClient();
-
-                using (var ns = client.GetStream())
+                using (var client = listener.AcceptTcpClient())
                 {
-                    ns.ReadTimeout = ns.WriteTimeout = TimeoutMillisec;
-
-                    using (var ms = new MemoryStream())
+                    using (var ns = client.GetStream())
                     {
-                        ns.Read(ms.ToArray(), 0, (int)ms.Length);
+                        ns.ReadTimeout = ns.WriteTimeout = TimeoutMillisec;
 
-                        BinaryFormatter bf = new BinaryFormatter();
-                        var ftpMessageData = (FTPMessageData)bf.Deserialize(ns);
-
-                        switch (ftpMessageData.Type)
+                        using (var ms = new MemoryStream())
                         {
-                            case FTPMessageType.TypeFile:
-                                using (var writer = new BinaryWriter(new FileStream(ftpMessageData.Message, FileMode.Create)))
-                                {
-                                    writer.Write(ftpMessageData.Data); 
-                                }
-                                break;
+                            ns.Read(ms.ToArray(), 0, (int)ms.Length);
+
+                            BinaryFormatter bf = new BinaryFormatter();
+                            var ftpMessageData = (FTPMessageData)bf.Deserialize(ns);
+
+                            switch (ftpMessageData.Type)
+                            {
+                                case FTPMessageType.TypeFile:
+                                    using (var writer = new BinaryWriter(new FileStream(ftpMessageData.Message, FileMode.Create)))
+                                    {
+                                        writer.Write(ftpMessageData.Data);
+                                    }
+                                    break;
+                            }
                         }
                     }
                 }

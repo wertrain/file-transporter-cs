@@ -101,18 +101,19 @@ namespace FTPLib
         {
             try
             {
-                var client = new System.Net.Sockets.TcpClient(ip, port);
-
-                using (var ns = client.GetStream())
+                using (var client = new System.Net.Sockets.TcpClient(ip, port))
                 {
-                    using (var ms = new MemoryStream())
+                    using (var ns = client.GetStream())
                     {
-                        var ftpMessageData = new FTPMessageData(FTPMessageType.TypeFile);
-                        ftpMessageData.Message = Path.GetFileName(path);
-                        ftpMessageData.Data = File.ReadAllBytes(path);
-                        BinaryFormatter bf = new BinaryFormatter();
-                        bf.Serialize(ms, ftpMessageData);
-                        ns.Write(ms.ToArray(), 0, (int)ms.Length);
+                        using (var ms = new MemoryStream())
+                        {
+                            var ftpMessageData = new FTPMessageData(FTPMessageType.TypeFile);
+                            ftpMessageData.Message = Path.GetFileName(path);
+                            ftpMessageData.Data = File.ReadAllBytes(path);
+                            BinaryFormatter bf = new BinaryFormatter();
+                            bf.Serialize(ms, ftpMessageData);
+                            ns.Write(ms.ToArray(), 0, (int)ms.Length);
+                        }
                     }
                 }
             }
